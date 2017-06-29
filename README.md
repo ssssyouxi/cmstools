@@ -1,7 +1,7 @@
 # tools
 ## 火车头
 请使用v8.3及以上版本。
-[v8.6版下载地址](http://file.locoy.com/v8/LocoySpider_V8.6_Build20150323.rar);  
+[v8.6版下载地址](http://file.locoy.com/v8/LocoySpider_V8.6_Build20150323.rar)  
 >数据库文件类型设置为Sqlite：扩展→更改数据保存数据库→Sqlite。
 ***
 
