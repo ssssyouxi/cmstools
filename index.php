@@ -2,7 +2,14 @@
    include "document.class.php";
    $document= new Document(__DIR__);
    $keyList = $document->Search("txt");
-?><!DOCTYPE html>
+   $db = new SQLite3("SpiderResult.db3");
+   $sql = "SELECT count(ID) FROM Content";
+   // $sql="select * from Content";
+  $count = $db->querySingle($sql);
+   // $count = $db->exec($sql);
+
+?>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -16,6 +23,27 @@
     <link rel="stylesheet" href="https://g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
     <link rel="stylesheet" href="https://g.alicdn.com/msui/sm/0.6.2/css/sm-extend.min.css">
     <style>
+    .progress-bar {
+          color: #fff;
+          float: left;
+          background-color: #0a0;
+          display: inline-block;
+          font-size: 12px;
+          line-height: 14px;
+          text-align: center;
+      }
+      .progress .progress-bar:last-child {
+          border-radius: 0 7px 7px 0;
+      }
+      .progress {
+          height: 14px;
+          overflow: hidden;
+          background-color: #f5f5f5;
+          border-radius: 7px;
+          -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
+          box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
+      }
+      .modal{width: 20rem;margin-left: -10rem;}
     .buttons .button.active {background-color: #0894ec;color: #fff;z-index: 90;}
     .buttons .button{margin:1px}
     </style>
@@ -48,7 +76,7 @@
                   <div class="item-inner">
                     <div class="item-title label">已发布数量</div>
                     <div class="item-input">
-                      <input id="total1" type="text" placeholder="已经发布的文章数量">
+                      <input id="total1"  type="text" placeholder="已经发布的文章数量" onKeypress="return (/[\d.]/.test(String.fromCharCode(event.keyCode)))">
                     </div>
                   </div>
                 </div>
@@ -58,7 +86,7 @@
                   <div class="item-inner">
                     <div class="item-title label">过去天数</div>
                     <div class="item-input">
-                      <input id="passtime" type="text" placeholder="已经发布的文章分布在过去的多少天发完">
+                      <input id="passtime" type="text" placeholder="已经发布的文章分布在过去的多少天发完" onKeypress="return (/[\d.]/.test(String.fromCharCode(event.keyCode)))">
                     </div>
                   </div>
                 </div>
@@ -68,7 +96,7 @@
                   <div class="item-inner">
                     <div class="item-title label">未发布数量</div>
                     <div class="item-input">
-                      <input id="total2" type="text" placeholder="未发布的文章数量">
+                      <input id="total2" type="text" placeholder="未发布的文章数量" onKeypress="return (/[\d.]/.test(String.fromCharCode(event.keyCode)))">
                     </div>
                   </div>
                 </div>
@@ -78,7 +106,7 @@
                   <div class="item-inner">
                     <div class="item-title label">未来天数</div>
                     <div class="item-input">
-                      <input id="futuretime" type="text" placeholder="未发布的文章将在未来多少天内发布完成">
+                      <input id="futuretime" type="text" placeholder="未发布的文章将在未来多少天内发布完成" onKeypress="return (/[\d.]/.test(String.fromCharCode(event.keyCode)))">
                     </div>
                   </div>
                 </div>
@@ -132,6 +160,22 @@
           </div>
         </div>
         </div>
+        <div class="modal modal-no-buttons modal-in" style="margin-top: -78px;">
+          <div class="modal-inner">
+            <div class="modal-title">正在生成数据库</div>
+            <div class="modal-text">
+                <div class="progress">
+                           <div class="progress-bar" style="width: 50%;">
+                              &nbsp;</div>
+                  
+                        </div>
+                <p id="percent">进度：0%</p>
+                <div class="preloader"></div>
+            </div>
+          </div>
+          <div class="modal-buttons "></div>
+        </div>
+        <div class="modal-overlay"></div>
     </div>
 
     <script type='text/javascript' src='https://g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
@@ -175,9 +219,50 @@
         
       });
 $("#submit").click(function(event) {
-  event.preventDefault();
-  $(".modal-overlay").addClass("modal-overlay-visible");
-        $(".modal").show();
+  window.count1= $("#pubTimeSwitch:checked").val()===undefined ?  <?=$count?>: parseInt($("#total1").val())+parseInt($("#total2").val());
+    $(".progress,#percent").hide();
+    event.preventDefault();
+    if($("#pubTimeSwitch:checked").val()){
+      if($("#total1").val()=="" ^ $("#passtime").val()=="" || $("#total2").val()=="" ^ $("#futuretime").val()==""||($("#total1").val()=="" && $("#passtime").val()=="" && $("#total2").val()=="" && $("#futuretime").val()=="")){
+        alert("请填写内容或关闭“是否随机时间”！");
+      return false;
+      }
+    }
+    if($("#keywordFileSwitch:checked").val()!=undefined && $("#keywordFilesName").val()==""){
+      alert("请选择文件或关闭“附加关键词”！");
+      return false;
+    }
+    $(".modal-overlay").addClass("modal-overlay-visible");
+    $(".modal").show();
+    window.keyfiles = $("#keywordFilesName").val()=="" ? null : $("#keywordFilesName").val().split(" ");
+    $.ajax({
+        url: 'format.php',
+        type: 'POST',
+        success: function(data) {
+            if (data == "数据库生成完成！") {
+                $(".modal-title").text(data);
+                if ($("#pubTimeSwitch:checked").val()) {
+                    setTimeout("getRand()", 500);
+                }else if($("#keywordFileSwitch:checked").val()!=undefined){
+                  window.randNum=[];
+                  $(".preloader").hide();
+                  $(".modal-title").text("正在随机添加关键词……");
+                  sub(0);
+                 
+            }else{
+                  console.log(data);
+                 $(".preloader").hide();
+                 setTimeout("hideModal()", 500);
+            }
+            } 
+        }
+    })
+})
+;
+
+function getRand(){
+  $(".modal-title").text("正在生成随机数，请稍后……");
+   $(".preloader").show();
   $.ajax({
     url: 'getrand.php',
     type: 'POST',
@@ -193,13 +278,16 @@ $("#submit").click(function(event) {
       window.randNum = data;
       window.randLen=randNum.length;
       console.log( window.randLen );
-      sub(0);
+      $(".modal-title").text("正在修改数据库……");
+      $(".preloader").hide();
+      setTimeout("sub(0)",500);
       
     }
   })
-});
+}
+
 function sub(id){
-    if (randLen == id) {
+    if (count1 == id) {
       $("#percent").text("完成！");
       setTimeout("hideModal()",500);
       return false;
@@ -207,10 +295,13 @@ function sub(id){
     $.ajax({
       url:"update.php",
       type:"post",
-      data:{"id":id+1,"randNum":randNum[id]},
+      data:{"id":id+1,"randNum":randNum[id],"keyfiles":keyfiles},
       success:function (data) {
-        $("#percent").text("进度："+ Math.ceil(data/randLen*100)+"%");
-        $(".progress-bar").width(data/randLen*100+"%");
+          console.log(data);
+        $("#percent").show().text("进度："+ Math.ceil(data/count1*100)+"%");
+        console.log("第"+data+"计算结果："+ data+"/"+ count1 + "=" +data/count1);
+        $(".progress,#percent").show();
+        $(".progress-bar").show().width(data/count1*100+"%");
         if (data % 10 ==0) {
           console.log( data )
         };
