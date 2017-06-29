@@ -33,6 +33,7 @@
 	      echo $this->lastErrorMsg();
 	   	}else{
             // rename($this->path,"SpiderResult.db");
+            
 	   	   echo "数据库生成完成！" ;
 	   	}
 	   	$this->close();

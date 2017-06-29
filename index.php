@@ -310,8 +310,17 @@ function sub(id){
     })
   }
       function hideModal (){
-        $(".modal-overlay").removeClass("modal-overlay-visible");
-        $(".modal").hide();
+        /*$(".modal-overlay").removeClass("modal-overlay-visible");
+        $(".modal").hide();*/
+        $.post('./rename.php', {"rename": 'db'}, function(data) {
+          if (data.err) {
+            $(".modal").removeClass("modal-no-buttons").html('<div class="modal-inner"><div class="modal-text">'+data.err+'</div></div><div class="modal-buttons "><span class="modal-button modal-button-bold">确定</span></div>'); 
+            $(".modal-button").click(function(){$(".modal-overlay").removeClass("modal-overlay-visible");$(".modal").hide();});
+          }else{
+            $(".modal").removeClass("modal-no-buttons").html('<div class="modal-inner"><div class="modal-text">'+data.msg+'</div></div><div class="modal-buttons "><span class="modal-button modal-button-bold">确定</span></div>'); 
+            $(".modal-button").click(function(){$(".modal-overlay").removeClass("modal-overlay-visible");$(".modal").hide();});
+          }
+        });
       };
     </script>
   </body>
