@@ -13,7 +13,7 @@ class MyDB extends SQLite3
             if($c){
              $sql .= "pub_time = $b ".",";
             }else{
-              $sql .= "pub_time = $b";
+              $sql .= "pub_time = $b ";
             }
           }
          if ($c) {
