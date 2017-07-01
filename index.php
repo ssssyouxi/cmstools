@@ -254,6 +254,9 @@ $("#submit").click(function(event) {
                  $(".preloader").hide();
                  setTimeout("hideModal()", 500);
             }
+            }else{
+              alert(data);
+              return false;
             } 
         }
     })

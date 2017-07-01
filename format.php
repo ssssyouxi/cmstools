@@ -28,12 +28,16 @@
 		);
 		INSERT INTO 'Content4' (`ID`,`title`,`content`) SELECT `ID`,`标题`,`内容` FROM '_old_Content';
 		DROP TABLE _old_Content;
-		DROP TABLE DownloadFile";
+		";
 	    if(!$this->exec($sql)){
 	      echo $this->lastErrorMsg();
 	   	}else{
-            // rename($this->path,"SpiderResult.db");
-            
+            $sql="SELECT name FROM sqlite_master WHERE name='DownloadFile' ";
+            if($this->exec($sql)){
+               $sql="DROP TABLE DownloadFile";
+               $this->exec($sql);
+            }
+            rename($this->path,"SpiderResult.db");
 	   	   echo "数据库生成完成！" ;
 	   	}
 	   	$this->close();
@@ -46,3 +50,7 @@
    $db->change();
    
 ?>
+
+
+
+DROP TABLE DownloadFile
