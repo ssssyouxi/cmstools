@@ -38,6 +38,7 @@ error_reporting(0);
       .modal{width: 20rem;margin-left: -10rem;}
     .buttons .button.active {background-color: #0894ec;color: #fff;z-index: 90;}
     .buttons .button{margin:1px}
+    .modal .preloader {margin: 0 auto}
     </style>
   </head>
   <body>
@@ -324,15 +325,24 @@ function sub(id){
       function hideModal (){
         /*$(".modal-overlay").removeClass("modal-overlay-visible");
         $(".modal").hide();*/
-        $.post('./rename.php', {"rename": 'db'}, function(data) {
-          if (data.err) {
-            $(".modal").removeClass("modal-no-buttons").html('<div class="modal-inner"><div class="modal-text">'+data.err+'</div></div><div class="modal-buttons "><span class="modal-button modal-button-bold">确定</span></div>'); 
-            $(".modal-button").click(function(){$(".modal-overlay").removeClass("modal-overlay-visible");$(".modal").hide();});
+        $(".modal-title").text("正在优化数据表，请稍后……");
+        $(".preloader").show();
+        $.post('./vacuum.php',{"msg":'start'},function(data){
+          $(".preloader").hide();
+          if(data.err){
+             $(".modal-title").text( data.err);
           }else{
-            $(".modal").removeClass("modal-no-buttons").html('<div class="modal-inner"><div class="modal-text">'+data.msg+'</div></div><div class="modal-buttons "><span class="modal-button modal-button-bold">确定</span></div>'); 
-            $(".modal-button").click(function(){$(".modal-overlay").removeClass("modal-overlay-visible");$(".modal").hide();});
-          }
-        });
+           $.post('./rename.php', {"rename": 'db'}, function(data) {
+            if (data.err) {
+              $(".modal").removeClass("modal-no-buttons").html('<div class="modal-inner"><div class="modal-text">'+data.err+'</div></div><div class="modal-buttons "><span class="modal-button modal-button-bold">确定</span></div>'); 
+              $(".modal-button").click(function(){$(".modal-overlay").removeClass("modal-overlay-visible");$(".modal").hide();});
+            }else{
+              $(".modal").removeClass("modal-no-buttons").html('<div class="modal-inner"><div class="modal-text">'+data.msg+'</div></div><div class="modal-buttons "><span class="modal-button modal-button-bold">确定</span></div>'); 
+              $(".modal-button").click(function(){$(".modal-overlay").removeClass("modal-overlay-visible");$(".modal").hide();});
+            }
+          })
+        }
+       })
       };
     </script>
   </body>
