@@ -5,6 +5,7 @@
    	  private $path;
       function __construct($path)
       {
+         $this->path=$path;
          $this->open($path);
       }
 
@@ -18,7 +19,7 @@
       public function change(){
       	 $sql ="
 		ALTER TABLE 'Content' RENAME TO '_old_Content';
-		CREATE TABLE 'Content4' (
+		CREATE TABLE 'Content' (
 		'ID'  INTEGER PRIMARY KEY AUTOINCREMENT,
 		'title'  TEXT,
 		'content' TEXT,
@@ -26,7 +27,7 @@
 		'pub_time' INTEGER DEFAULT 0,
 		'is_ping' DEFAULT 0
 		);
-		INSERT INTO 'Content4' (`ID`,`title`,`content`) SELECT `ID`,`标题`,`内容` FROM '_old_Content';
+		INSERT INTO 'Content' (`ID`,`title`,`content`) SELECT `ID`,`标题`,`内容` FROM '_old_Content';
 		DROP TABLE _old_Content;
 		";
 	    if(!$this->exec($sql)){
@@ -37,10 +38,9 @@
                $sql="DROP TABLE DownloadFile";
                $this->exec($sql);
             }
-            rename($this->path,"SpiderResult.db");
+            $this->close();
 	   	   echo "数据库生成完成！" ;
-	   	}
-	   	$this->close();
+	   	}	
 	  }
    }
    $db=new MyDB("SpiderResult.db3");
@@ -50,7 +50,3 @@
    $db->change();
    
 ?>
-
-
-
-DROP TABLE DownloadFile

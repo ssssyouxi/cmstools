@@ -8,7 +8,7 @@ class MyDB extends SQLite3
          $this->open($path);
       }
       public function change($a , $b = "",$c = ""){
-      	 $sql ="UPDATE Content4 set ";
+      	 $sql ="UPDATE Content set ";
           if ($b) {
             if($c){
              $sql .= "pub_time = $b ".",";

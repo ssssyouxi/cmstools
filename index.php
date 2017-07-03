@@ -1,14 +1,3 @@
-<?php
-   include "document.class.php";
-   $document= new Document(__DIR__);
-   $keyList = $document->Search("txt");
-   $db = new SQLite3("SpiderResult.db3");
-   $sql = "SELECT count(ID) FROM Content";
-   // $sql="select * from Content";
-  $count = $db->querySingle($sql);
-   // $count = $db->exec($sql);
-
-?>
 <!DOCTYPE html>
 <html>
   <head>
@@ -49,6 +38,23 @@
     </style>
   </head>
   <body>
+  <?php
+    if(!file_exists("SpiderResult.db3")){
+          exit("请放入文件SpiderResult.db3！");
+       }
+     include "document.class.php";
+     $document= new Document(__DIR__);
+     $keyList = $document->Search("txt");
+     
+     $db = new SQLite3("SpiderResult.db3");
+     $sql = "SELECT count(ID) FROM Content";
+     // $sql="select * from Content";
+    $count = $db->querySingle($sql);
+    if(empty($count)){
+        exit("请放入正确的SpiderResult.db3！");
+    }
+     // $count = $db->exec($sql);
+  ?>
     <div class="page-group">
         <div class="page page-current" style="max-width: 760px;margin: 0 auto;">
         <header class="bar bar-nav">
