@@ -1,5 +1,5 @@
 <?php
-
+error_reporting(0);
 class MyDB extends SQLite3
    {	
    	private $path;

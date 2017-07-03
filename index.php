@@ -1,3 +1,6 @@
+<?php
+error_reporting(0);
+?>
 <!DOCTYPE html>
 <html>
   <head>
@@ -256,7 +259,7 @@ $("#submit").click(function(event) {
                   sub(0);
                  
             }else{
-                  console.log(data);
+                  // console.log(data);
                  $(".preloader").hide();
                  setTimeout("hideModal()", 500);
             }
@@ -283,10 +286,10 @@ function getRand(){
       "futuretime":$("#futuretime").val()
     },
     success:function  (data) {
-      console.log(data);
+      // console.log(data);
       window.randNum = data;
       window.randLen=randNum.length;
-      console.log( window.randLen );
+      // console.log( window.randLen );
       $(".modal-title").text("正在修改数据库……");
       $(".preloader").hide();
       setTimeout("sub(0)",500);
@@ -306,14 +309,14 @@ function sub(id){
       type:"post",
       data:{"id":id+1,"randNum":randNum[id],"keyfiles":keyfiles},
       success:function (data) {
-          console.log(data);
+          // console.log(data);
         $("#percent").show().text("进度："+ Math.ceil(data/count1*100)+"%");
-        console.log("第"+data+"计算结果："+ data+"/"+ count1 + "=" +data/count1);
+        // console.log("第"+data+"计算结果："+ data+"/"+ count1 + "=" +data/count1);
         $(".progress,#percent").show();
         $(".progress-bar").show().width(data/count1*100+"%");
-        if (data % 10 ==0) {
-          console.log( data )
-        };
+        // if (data % 10 ==0) {
+        //  console.log( data )
+        // };
         sub(id+1);
       }
     })

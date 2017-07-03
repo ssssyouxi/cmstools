@@ -1,4 +1,5 @@
 <?php
+error_reporting(0);
 header('Content-type: application/json');
 if ($_POST["rename"]="db") {
 	if (rename("SpiderResult.db3",date("Y-m-d-H-i-s").".db")) {
