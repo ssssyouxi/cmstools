@@ -228,6 +228,25 @@ error_reporting(0);
         });
         
       });
+//自动填入剩余数量
+$("#total1").keyup(function(){
+
+ if(<?=$count?>-$("#total1").val()<0){
+  $("#total1").val(<?=$count?>);
+  $("#total2").val("");
+  }else{
+    $("#total2").val(<?=$count?>-$('#total1').val());
+  }
+})
+$("#total2").keyup(function(){
+
+ if(<?=$count?>-$("#total1").val()<0){
+  $("#total2").val(<?=$count?>);
+  $("#total1").val("");
+  }else{
+    $("#total1").val(<?=$count?>-$('#total2').val());
+  }
+})
 $("#submit").click(function(event) {
   window.count1= $("#pubTimeSwitch:checked").val()===undefined ?  <?=$count?>: parseInt($("#total1").val())+parseInt($("#total2").val());
     $(".progress,#percent").hide();
