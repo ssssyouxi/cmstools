@@ -312,22 +312,26 @@ function getRand(){
       // console.log( window.randLen );
       $(".modal-title").text("正在修改数据库……");
       $(".preloader").hide();
-      setTimeout("sub(0)",500);
-      
+      setTimeout(function(){
+        console.log(Number(new Date()));
+        sub(0);
+      },500);
     }
   })
 }
 
 function sub(id){
-    if (count1 == id) {
+    if (count1 +200 <= id) {
+      console.log(Number(new Date()));
       $("#percent").text("完成！");
       setTimeout("hideModal()",500);
+      
       return false;
     }
     $.ajax({
       url:"update.php",
       type:"post",
-      data:{"id":id+1,"randNum":randNum[id],"keyfiles":keyfiles},
+      data:{"id":id+1,"randNum":randNum[id],"keyfiles":keyfiles,"count1":count1},
       success:function (data) {
           // console.log(data);
         $("#percent").show().text("进度："+ Math.ceil(data/count1*100)+"%");
@@ -337,7 +341,7 @@ function sub(id){
         // if (data % 10 ==0) {
         //  console.log( data )
         // };
-        sub(id+1);
+        sub(id+200);
       }
     })
   }
