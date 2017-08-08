@@ -27,7 +27,7 @@
 		'pub_time' INTEGER DEFAULT 0,
 		'is_ping' DEFAULT 0
 		);
-		INSERT INTO 'Content' (`ID`,`title`,`content`) SELECT `ID`,`标题`,`内容` FROM '_old_Content';
+		INSERT INTO 'Content' (`title`,`content`) SELECT `标题`,`内容` FROM '_old_Content';
 		DROP TABLE _old_Content;
 		";
 	    if(!$this->exec($sql)){
