@@ -17,21 +17,23 @@
       }
 
       public function change(){
-      	 $sql ="
+		$sql ="
 		ALTER TABLE 'Content' RENAME TO '_old_Content';
 		CREATE TABLE 'Content' (
-		'ID'  INTEGER PRIMARY KEY AUTOINCREMENT,
-		'title'  TEXT,
-		'content' TEXT,
-      'title2' TEXT,
-		'pub_time' INTEGER DEFAULT 0,
-		'is_ping' DEFAULT 0
+			'ID'  INTEGER PRIMARY KEY AUTOINCREMENT,
+			'title'  TEXT,
+			'content' TEXT,
+			'title2' TEXT,
+			'pub_time' INTEGER DEFAULT 0,
+			'is_ping' DEFAULT 0
 		);
-		INSERT INTO 'Content' (`title`,`content`) SELECT `标题`,`内容` FROM '_old_Content';
+		INSERT INTO 'Content' (`title`,`content`) SELECT `标题`,`内容` FROM '_old_Content' ORDER BY random();
 		DROP TABLE _old_Content;
+		VACUUM;
 		";
+		
 	    if(!$this->exec($sql)){
-	      echo $this->lastErrorMsg();
+	      	echo json_encode(["err"=>$this->lastErrorMsg()]) ;
 	   	}else{
             $sql="SELECT name FROM sqlite_master WHERE name='DownloadFile' ";
             if($this->exec($sql)){
@@ -39,13 +41,13 @@
                $this->exec($sql);
             }
             $this->close();
-	   	   echo "数据库生成完成！" ;
+			echo json_encode(["err"=>null,"msg"=>"数据库生成完成！"]) ;
 	   	}	
 	  }
    }
    $db=new MyDB("SpiderResult.db3");
    if(!$db){
-         	echo $this->lastErrorMsg();
+         	echo json_encode(["err"=>$this->lastErrorMsg()]) ;
          }
    $db->change();
    
