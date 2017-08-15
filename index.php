@@ -343,6 +343,7 @@
                 $(".modal").show();
                 //整理数据库
                 Sub.formatDb(function () { 
+                    
                     if ($("#pubTimeSwitch:checked").val() === undefined && $("#keywordFileSwitch:checked").val() === undefined && $("#divTimeSwitch:checked").val() === undefined) {
                         //如果不需要随机时间、分割数据库、附加关键词，直接完成操作
                         Sub.modDbName();
@@ -361,27 +362,34 @@
                         })    
                     }
                 })
-                //console.log(Sub.getRand());
-
             });
             var date = new Date();
             window.dbDir = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() + "_" + date.getHours() + "-" + date.getMinutes() + "-" + date.getSeconds();
             var Sub = {
                 formatDb : function (success_func) {
-                    $(".modal-title").text("正在整理数据库……");
-                    $.ajax({
-                        url: 'format.php',
-                        type: 'POST',
-                        success: function (data) {
+                    $(".modal-title").text("正在转换表结构……");
+                    $.post("format.php", {"trans":true},
+                        function (data) {
                             if(data.err){
                                 alert(data.err);
                                 return false;
                             }else{
-                                $(".modal-title").text(data.msg);
-                                success_func();
+                                $(".modal-title").text("正在清理无用表……");
+                                $.post("format.php", {"vacuum":true},
+                                    function (data) {
+                                        if(data.err){
+                                            alert(data.err);
+                                            return false;
+                                        }else{
+                                            $(".modal-title").text("数据库结构整理完成");
+                                            success_func();
+                                        }
+                                    }
+                                );
+                                
                             }
                         }
-                    })
+                    );
                 },
                 //修改数据库名
                 modDbName : function () {
