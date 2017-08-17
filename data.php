@@ -127,6 +127,7 @@ class RecurProcess
         $newDB->exec($sql);
         $newDB->beginTransaction();
         foreach ($res as $value) {
+            $value = str_replace("'","\"",$value);
             $sql = "INSERT INTO 'Content' (`title`,`content`,`title2`,`pub_time`) VALUES ( '".$value['title']."' , '".$value['content']."' , '".$value['title2']."' , '".$value['pub_time']."' )";
             $newDB->exec($sql);
         }
