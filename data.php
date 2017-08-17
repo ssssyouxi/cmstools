@@ -105,7 +105,9 @@ class RecurProcess
     }
     public function divDB()
     {
-        $sql = "SELECT `title`,`content`,`title2`,`pub_time` from `Content` ORDER BY pub_time LIMIT ".$_POST["everydb"]." OFFSET ".$_POST["currentDB"]*$_POST["everydb"];
+        //$sql = "SELECT `title`,`content`,`title2`,`pub_time` from `Content` ORDER BY pub_time LIMIT ".$_POST["everydb"]." OFFSET ".$_POST["currentDB"]*$_POST["everydb"];
+        $sql = "SELECT `title`,`content`,`title2`,`pub_time` from `Content` WHERE ID > ".$_POST["currentDB"]*$_POST["everydb"]." and ID <= ".($_POST["currentDB"]+1)*$_POST["everydb"]." ORDER BY pub_time";
+
         $res = $this->dbh->query($sql);
         if (empty($res)) {
             exit(json_encode(["err"=>"没有需要处理的数据了"]));
